@@ -1,6 +1,7 @@
 import axios from "axios"
 
 export default class User {
+    
     constructor(context) {
         this.context = context
         this.token = localStorage.getItem('token');

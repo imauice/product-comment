@@ -1,9 +1,15 @@
-<script setup>
-import TheWelcome from '../components/TheWelcome.vue'
+<script>
+import ProductView from "./component/ProductView.vue";
+
+export default {
+  components:{
+    ProductView
+  }
+}
 </script>
 
 <template>
-  <main>
-    <TheWelcome />
-  </main>
+  <div class="container">
+    <ProductView/>
+  </div>
 </template>

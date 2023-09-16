@@ -2,16 +2,9 @@ var { User,validateLogin,validateSignupData } = require("../model/user");
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcrypt');
 
+
 module.exports.signup = async (req,res) => {
-     /**
-     * validate signup data
-     */
-
-      const {error} = validateSignupData(req.body);
-
-      if(error){
-          return res.status(403).send({error:error})
-      }
+    
 
       try {
 
@@ -36,12 +29,10 @@ module.exports.signup = async (req,res) => {
                 password:encrypted,
                 email:req.body.email
               });
-
-              console.log(user);
     
-             const result = await user.save();
+             const result = await user.save();           
     
-             return res.status(200).send({message:'Sign Up Success',data:result});
+             return res.status(200).send({message:'Sign Up Success',data:{userId:result._id}});
          });
    
           
@@ -58,17 +49,6 @@ module.exports.signup = async (req,res) => {
 }
 
 module.exports.signin = async (req,res) => {
-
-    /**
-     * validate login data
-     */
-
-    const {error} = validateLogin(req.body);
-
-    if(error){
-        return res.status(403).send({error:error})
-    }
-
 
     /**
      * try to verify user
@@ -90,17 +70,19 @@ module.exports.signin = async (req,res) => {
 
             //sign jsonwebtoken 
             const payload = {
+                userId:user._id,
                 username:user.username,
                 email:user.email
             }
             
-            const token = jwt.sign(payload,process.env.JWT_SECRET,{algorithm:'ES256',expiresIn:'4H'});
+            const token = jwt.sign(payload,process.env.JWT_SECRET,{expiresIn:'4H'});
 
-            return res.status(200).send(token);
+            return res.status(200).send({token:token,type:"Bearer "});
 
         }
         
     } catch (error) {
+        console.error(error);
         return res.status(400).send({error:error});
     }
 
