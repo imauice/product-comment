@@ -33,7 +33,6 @@ methods:{
 
         await this.userservice.Signin(logindata).then(result => {
             if(result){
-                console.log(result);
                 this.$router.push('/profile');
             }
         })
