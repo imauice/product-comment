@@ -1,10 +1,18 @@
 <script>
 import { RouterView } from 'vue-router'
 import TopNavbar from "@/components/navbar/TopNavbar.vue";
+import User from "@/services/user";
 
 export default {
-  components:{
+  components: {
     TopNavbar
+  },
+  setup() {
+    const userservice = new User();
+    return { userservice }
+  },
+  async mounted(){
+    await this.userservice.greeting();
   }
 }
 
@@ -12,7 +20,7 @@ export default {
 
 <template>
   <div>
-    <TopNavbar/>
+    <TopNavbar />
     <RouterView />
   </div>
 </template>
@@ -29,7 +37,7 @@ nav {
   font-size: 12px;
   text-align: center;
   margin-top: 2rem;
-  margin-left:1rem;
+  margin-left: 1rem;
   margin-right: 1rem;
 }
 

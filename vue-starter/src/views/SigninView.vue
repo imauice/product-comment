@@ -37,7 +37,7 @@ export default {
 
             await this.userservice.Signin(logindata).then(result => {
                 if (result) {
-                    this.$router.push('/profile');
+                    this.$router.push('/');
                 }
             })
         }

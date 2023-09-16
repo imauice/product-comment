@@ -26,6 +26,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
+app.use('/greeting',(req,res)=>{return res.status(200).send({message:"Hello how are you!"})});
 app.use('/users', usersRouter);
 app.use('/products',require('./routes/product'));
 

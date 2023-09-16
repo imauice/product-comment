@@ -110,11 +110,11 @@
                             <div>
 
                                 <label class="form-label">username</label>
-                                <input type="text" class="form-control" />
-                                <label class="form-label">password</label>
-                                <input type="password" class="form-control" />
-                                <button type="button" class="btn btn-primary my-3">ลงชื่อเข้าใช้</button>
-                                <button type="button" class="btn btn-link text-sm">สมัครสมาชิก</button>
+                                <input v-model="username" type="text" class="form-control"/>
+                                <label  class="form-label">password</label>
+                                <input v-model="password" type="password" class="form-control" />
+                                <button type="button" class="btn btn-primary my-3" data-bs-dismiss="modal" @click="signin">ลงชื่อเข้าใช้</button>
+                                <button type="button" class="btn btn-link text-sm" data-bs-dismiss="modal" @click="$router.push('/signup')">สมัครสมาชิก</button>
 
                             </div>
                         </div>
@@ -128,34 +128,39 @@
 </template>
 <script>
 import Product from "@/services/productservice";
+import User from "@/services/user";
 
 export default {
     setup() {
 
         const productservice = new Product();
+        const userservice = new User();
 
         const dateFormat = (date) => {
             return new Date(date).toLocaleDateString('th-TH', { day: '2-digit', month: "short", year: "2-digit" });
         }
 
-        return { productservice, dateFormat }
+        return { productservice,userservice, dateFormat }
     },
     data() {
         return {
             baseUrl: import.meta.env.VITE_APP_BASEURL,
             auth: false,
             products: [],
-            selectedProduct: []
+            selectedProduct: [],
+            username:"",
+            password:""
         }
     },
     async mounted() {
 
         await this.getProduct();
+
     },
     methods: {
         async getProduct() {
             await this.productservice.getProduct().then(result => {
-                console.log(result);
+     
                 if (result && result.message === 'Get product successfully') {
                     this.products = result.data;
                 }
@@ -164,6 +169,16 @@ export default {
         comment(data) {
             this.selectedProduct = data;
             console.log(this.selectedProduct);
+        },
+        async signin(){
+            const data = {
+                username:this.username,
+                password:this.password,
+            }
+            await this.userservice.Signin(data).then(result=>{
+              
+                this.auth=true;
+            })
         }
     }
 }
