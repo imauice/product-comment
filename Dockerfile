@@ -1,9 +1,7 @@
 FROM node:18
 
 # Create app directory
-WORKDIR /usr/src/app
-
-cd backend
+WORKDIR /backend
 
 COPY package*.json ./
 
@@ -14,5 +12,5 @@ COPY . .
 
 EXPOSE 8080
 
-CMD [ "node", "server.js" ]
+CMD [ "node", "./bin/www" ]
 
