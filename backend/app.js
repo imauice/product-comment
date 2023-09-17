@@ -23,12 +23,12 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use('/v1/cp',express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/greeting',(req,res)=>{return res.status(200).send({message:"Hello how are you!"})});
-app.use('/users', usersRouter);
-app.use('/products',require('./routes/product'));
+app.use('/v1/cp/', indexRouter);
+app.use('/v1/cp/greeting',(req,res)=>{return res.status(200).send({message:"Hello how are you!"})});
+app.use('/v1/cp/users', usersRouter);
+app.use('/v1/cp/products',require('./routes/product'));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
