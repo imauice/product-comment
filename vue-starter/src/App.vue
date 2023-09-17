@@ -1,78 +1,49 @@
 <script>
 import { RouterView } from 'vue-router'
 import TopNavbar from "@/components/navbar/TopNavbar.vue";
+import Loader from "@/components/Loader.vue";
 import User from "@/services/user";
 
 export default {
   components: {
-    TopNavbar
+    TopNavbar,
+    Loader
   },
   setup() {
     const userservice = new User();
     return { userservice }
   },
-  async mounted(){
-    await this.userservice.greeting();
+  data (){
+    return {
+      loading:true,
+    }
+  },
+  async mounted() {
+    await this.userservice.greeting().then(result=>{
+      if(result){
+        this.loading = false;
+      }
+    });
   }
 }
 
 </script>
 
 <template>
-  <div>
+  <div v-if="!loading">
     <TopNavbar />
     <RouterView />
+  </div>
+  <div v-else class="loader">
+    <Loader/>
   </div>
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-  margin-left: 1rem;
-  margin-right: 1rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+.loader{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }
 </style>

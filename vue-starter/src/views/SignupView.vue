@@ -3,13 +3,15 @@
 <div>
 
     <h1 class="display-6 mb-3">Signup</h1>
-    <label>username</label>
-    <input v-model="username" type="text" class="form-control" style="max-width:15rem"/>
-    <label>password</label>
-    <input v-model="password" type="password" class="form-control" style="max-width:15rem"/>
-    <label>email</label>
-    <input v-model="email" type="email" class="form-control" style="max-width:15rem"/>
-    <button class="btn btn-primary my-3" @click="SignUp">Sign Up</button>
+    <form>
+        <label>username</label>
+        <input v-model="username" type="text" class="form-control" style="max-width:15rem"/>
+        <label>password</label>
+        <input v-model="password" type="password" class="form-control" style="max-width:15rem"/>
+        <label>email</label>
+        <input v-model="email" type="email" class="form-control" style="max-width:15rem"/>
+        <button class="btn btn-primary my-3" @click.prevent="SignUp">Sign Up</button>
+    </form>
 </div>
 </div>
 
@@ -31,15 +33,15 @@ export default {
     },
     methods:{
         async SignUp(){
-            const singupdata = {
+            const signupdata = {
                username: this.username,
                password: this.password,
                email: this.email
             }
 
-            await this.userservice.Signup(singupdata).then(result=>{
+            await this.userservice.Signup(signupdata).then(result=>{
                 if(result){
-                    console.log(result);
+                    this.$router.push('/signin')
                 }
             })
         }

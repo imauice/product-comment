@@ -1,16 +1,20 @@
 import axios from "axios"
+import { useUserStore } from '@/stores/user'
 
 export default class User {
 
     constructor(context) {
         this.context = context
-        this.token = localStorage.getItem('token');
         this.url = import.meta.env.VITE_APP_BASEURL;
+        this.userservice = useUserStore();
+        this.token = this.userservice.token;
     }
 
     //greeting api
     async greeting() {
-       
+
+        let data = null;
+
         let config = {
             method: 'get',
             maxBodyLength: Infinity,
@@ -20,11 +24,36 @@ export default class User {
 
         await axios.request(config)
             .then((response) => {
-                console.log(JSON.stringify(response.data));
+                data = JSON.stringify(response.data);
             })
             .catch((error) => {
-                console.log(error);
+                data = error.message;
             });
+
+        return data;
+    }
+
+    async GetMe() {
+        let data = null;
+        let config = {
+            method: 'get',
+            maxBodyLength: Infinity,
+            url: `${this.url}/users/me`,
+            headers: {
+                'Authorization': this.token
+            }
+        };
+
+        await axios.request(config)
+            .then((response) => {
+                data = response.data;
+                this.userservice.setUser(data);
+            })
+            .catch((error) => {
+                data = { message: "Get user error", error: error.message }
+            });
+
+        return data;
     }
 
 
@@ -45,6 +74,7 @@ export default class User {
         await axios.request(config)
             .then((response) => {
                 data = response.data;
+                this.userservice.setToken(`Bearer ${data.token}`);
             })
             .catch((error) => {
                 data = { message: error.message, error: error }
@@ -75,5 +105,57 @@ export default class User {
             });
 
         return data;
+    }
+
+    //get profile
+    async getProfile() {
+
+        let data;
+
+        let config = {
+            method: 'get',
+            maxBodyLength: Infinity,
+            url: `${this.url}/users/profile`,
+            headers: {
+                'Authorization': this.token
+            }
+        };
+
+        await axios.request(config)
+            .then((response) => {
+                data = response.data;
+            })
+            .catch((error) => {
+                data = { message: "Get profile failed", error: error.message }
+            });
+
+        return data;
+    }
+
+    //create profile
+    async createProfile(formData) {
+      
+        let responseData;
+
+        let config = {
+            method: 'post',
+            maxBodyLength: Infinity,
+            url: `${this.url}/users/profile`,
+            headers: {
+                'Authorization': this.token,
+               
+            },
+            data: formData
+        };
+
+        axios.request(config)
+            .then((response) => {
+                responseData = response.data;
+            })
+            .catch((error) => {
+                responseData = {message:"Create profile failed", error: error.message};
+            });
+            
+            return responseData;
     }
 }

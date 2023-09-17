@@ -3,6 +3,9 @@ const fs = require('fs');
 
 module.exports.createProfile = async (req, res) => {
     try {
+
+        let data;
+
         if (req.file) {
             
             const fileName = req.file.filename;
@@ -24,7 +27,7 @@ module.exports.createProfile = async (req, res) => {
 
             } else {
 
-                const data = {
+                 data = {
                     userId: req.user.userId,
                     name: req.body.name,
                     avatar: {
@@ -34,8 +37,24 @@ module.exports.createProfile = async (req, res) => {
 
                     }
                 }
+            }
 
-                const profile = new Profile(data);
+        } else {
+
+            data = {
+                userId: req.user.userId,
+                name: req.body.name,
+                avatar: {
+
+                    id: "1694863336986-354375360-avatar-2e5cccedf66e4c1894f649192615f6cb-512x512.jpeg",
+                    url: "/images/avatar/1694863336986-354375360-avatar-2e5cccedf66e4c1894f649192615f6cb-512x512.jpeg"
+
+                }
+            }
+        }
+
+        //create profile
+        const profile = new Profile(data);
                 const result = await profile.save();
 
                 if (result) {
@@ -43,12 +62,6 @@ module.exports.createProfile = async (req, res) => {
                 } else {
                     return res.status(400).send({ message: "create profile failed" });
                 }
-            }
-
-
-        } else {
-            return res.status(400).send({ message: "avatar is required" });
-        }
 
     } catch (error) {
         console.error(error);

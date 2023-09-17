@@ -4,21 +4,24 @@ var User = require('../controller/user.controller');
 var Profile = require('../controller/user.profile.controller');
 const Auth = require('../middleware/auth.js');
 
-const multer = require('multer')
+const multer = require('multer');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, './public/images/avatar')
+    cb(null, './public/images/avatar');
   },
   filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-    cb(null, uniqueSuffix+'-'+file.fieldname + '-' + file.originalname)
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix+'-'+file.fieldname + '-' + file.originalname);
   }
 })
 
-const upload = multer({ storage: storage })
+const upload = multer({ storage: storage });
 
 const cpUpload = upload.single('avatar');
+
+//get auth state
+router.get('/me',Auth,User.me);
 
 /* GET users listing. */
 router.get('/profile', function (req, res, next) {

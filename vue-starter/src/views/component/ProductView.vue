@@ -20,7 +20,7 @@
                                 </span>
                             </div>
                             <div class="col text-end">
-                                <button v-if="auth" type="button" class="btn btn-link btn-comment text-dark"
+                                <button v-if="authState" type="button" class="btn btn-link btn-comment text-dark"
                                     data-bs-toggle="modal" data-bs-target=#chat @click="comment(item)">
                                     แสดงความคิดเห็น
                                 </button>
@@ -39,7 +39,7 @@
                         <div class="comment">
                             <div v-for="(c, index) in item.comments">
                                 <div class="row w-100 mb-3">
-                                    <div class="col-2">
+                                    <div class="col-md-2">
                                         <div class="avatar"
                                             :style="`background-image:url('${baseUrl + c.userAvatar[0]?.url}')`">
 
@@ -48,7 +48,7 @@
                                             {{ c.userName[0] }}
                                         </p>
                                     </div>
-                                    <div class="col-10 comment-item py-3">
+                                    <div class="col-md-10 comment-item py-3">
                                         <p>
 
                                             {{ c.comment }}
@@ -110,11 +110,13 @@
                             <div>
 
                                 <label class="form-label">username</label>
-                                <input v-model="username" type="text" class="form-control"/>
-                                <label  class="form-label">password</label>
+                                <input v-model="username" type="text" class="form-control" />
+                                <label class="form-label">password</label>
                                 <input v-model="password" type="password" class="form-control" />
-                                <button type="button" class="btn btn-primary my-3" data-bs-dismiss="modal" @click="signin">ลงชื่อเข้าใช้</button>
-                                <button type="button" class="btn btn-link text-sm" data-bs-dismiss="modal" @click="$router.push('/signup')">สมัครสมาชิก</button>
+                                <button type="button" class="btn btn-primary my-3" data-bs-dismiss="modal"
+                                    @click="signin">ลงชื่อเข้าใช้</button>
+                                <button type="button" class="btn btn-link text-sm" data-bs-dismiss="modal"
+                                    @click="$router.push('/signup')">สมัครสมาชิก</button>
 
                             </div>
                         </div>
@@ -129,10 +131,11 @@
 <script>
 import Product from "@/services/productservice";
 import User from "@/services/user";
+import { useUserStore } from "@/stores/user";
 
 export default {
     setup() {
-
+        const userStore = useUserStore();
         const productservice = new Product();
         const userservice = new User();
 
@@ -140,7 +143,7 @@ export default {
             return new Date(date).toLocaleDateString('th-TH', { day: '2-digit', month: "short", year: "2-digit" });
         }
 
-        return { productservice,userservice, dateFormat }
+        return { productservice, userservice,userStore, dateFormat }
     },
     data() {
         return {
@@ -148,8 +151,18 @@ export default {
             auth: false,
             products: [],
             selectedProduct: [],
-            username:"",
-            password:""
+            username: "",
+            password: ""
+        }
+    },
+    computed: {
+        authState() {
+            if (this.userStore.token) {
+                return true;
+
+            } else {
+                return false;
+            }
         }
     },
     async mounted() {
@@ -160,7 +173,7 @@ export default {
     methods: {
         async getProduct() {
             await this.productservice.getProduct().then(result => {
-     
+
                 if (result && result.message === 'Get product successfully') {
                     this.products = result.data;
                 }
@@ -168,16 +181,18 @@ export default {
         },
         comment(data) {
             this.selectedProduct = data;
-            console.log(this.selectedProduct);
         },
-        async signin(){
+        async signin() {
             const data = {
-                username:this.username,
-                password:this.password,
+                username: this.username,
+                password: this.password,
             }
-            await this.userservice.Signin(data).then(result=>{
-              
-                this.auth=true;
+            await this.userservice.Signin(data).then(result => {
+
+                if (result && result.token) {
+
+                    this.$router.push('/profile')
+                }
             })
         }
     }
