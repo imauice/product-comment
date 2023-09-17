@@ -43,8 +43,6 @@ module.exports.signup = async (req,res) => {
     
              return res.status(200).send({message:'Sign Up Success',data:{userId:result._id}});
          });
-   
-          
     }
 
 } catch (error) {
@@ -71,7 +69,9 @@ module.exports.signin = async (req,res) => {
             return res.status(400).send({error: 'User not found'});
         }
 
-        const isValiduser = bcrypt.compare(user.password, req.body.password);
+        const isValiduser = bcrypt.compareSync( req.body.password,user.password);
+
+        console.log(isValiduser);
 
         if(!isValiduser){
             return res.status(403).send({error:'Invalid password'});

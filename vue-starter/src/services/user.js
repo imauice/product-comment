@@ -148,12 +148,14 @@ export default class User {
             data: formData
         };
 
-        axios.request(config)
+        console.log(config);
+
+        await axios.request(config)
             .then((response) => {
                 responseData = response.data;
             })
             .catch((error) => {
-                responseData = {message:"Create profile failed", error: error.message};
+                responseData = {message:"Create profile failed", error: error.message,data:error.response?.data};
             });
             
             return responseData;

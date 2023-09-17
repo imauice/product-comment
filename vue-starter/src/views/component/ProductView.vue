@@ -37,7 +37,7 @@
 
                         <p class="my-3">ความคิดเห็นล่าสุด</p>
                         <div class="comment">
-                            <div v-for="(c, index) in item.comments">
+                            <div v-for="(c, index) in item.comments.slice(item.comments.length-2)">
                                 <div class="row w-100 mb-3">
                                     <div class="col-md-2">
                                         <div class="avatar"
@@ -73,8 +73,8 @@
                             <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <div class="modal-body modal-h">
-                            <div v-for="(item, index) in selectedProduct.comments" :key="index">
+                        <div  class="modal-body modal-h">
+                            <div v-if="selectedProduct.comments" v-for="(item, index) in selectedProduct.comments" :key="index">
                                 <p>
                                     {{ item.comment }}
                                 </p>
@@ -87,11 +87,12 @@
                                 </div>
 
                             </div>
+                            <small v-if="warning!==''" class="text-danger my-3">{{ warning }}</small>
 
                         </div>
                         <div class="modal-footer">
-                            <input type="text" class="form-control" />
-                            <button type="button" class="btn btn-primary">ส่งความคิดเห็น</button>
+                            <input v-model="commentMessage" type="text" class="form-control" />
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="sendComment">ส่งความคิดเห็น</button>
                         </div>
                     </div>
                 </div>
@@ -152,7 +153,9 @@ export default {
             products: [],
             selectedProduct: [],
             username: "",
-            password: ""
+            password: "",
+            commentMessage:"",
+            warning:""
         }
     },
     computed: {
@@ -181,6 +184,18 @@ export default {
         },
         comment(data) {
             this.selectedProduct = data;
+        },
+        async sendComment(){
+            console.log(this.selectedProduct._id[0]);
+            console.log(this.commentMessage);
+            await this.productservice.commentProduct(this.selectedProduct._id[0],this.commentMessage).then(result=>{
+                if(result && result.message ==="created comment successfully"){
+                    this.getProduct();
+                 
+                }else{
+                    this.warning ="ไม่สามารถส่ง message ได้"
+                }
+            })
         },
         async signin() {
             const data = {

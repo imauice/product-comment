@@ -12,6 +12,7 @@
                     <button class="btn btn-primary my-3" @click.prevent="SignIn">Signin</button>
                     <button class="btn btn-link mx-2 text-light" @click.prevent="$router.push('/signup')">signup</button>
                 </form>
+                <small v-if="warning!==''" class="text-warning">{{ warning }}</small>
             </div>
         </div>
     </div>
@@ -27,7 +28,8 @@ export default {
     data() {
         return {
             username: "",
-            password: ""
+            password: "",
+            warning:''
         }
     },
     methods: {
@@ -39,8 +41,11 @@ export default {
             }
 
             await this.userservice.Signin(logindata).then(result => {
-                if (result) {
+             
+                if (result && result.token) {
                     this.$router.push('/profile');
+                }else{
+                    this.warning = "username หรือ password ไม่ถูกต้อง"
                 }
             })
         }

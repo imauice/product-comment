@@ -1,17 +1,17 @@
 <template>
     <div class="container">
         <div class="content">
-            <div v-if="!profile">
+            <div v-if="!isGetProfile">
                 <div v-if="!create" class="text-center text-light">
 
                     <h4>คุณยังไม่ได้สร้างข้อมูลส่วนตัว</h4>
 
                     <button class="btn btn-primary mt-3 " style="max-width:10rem" @click="setCreate">สร้างเลย!</button>
                 </div>
-                <div v-else>
+                <div v-else class="text-light text-center">
                     <!-- create form -->
-                    <form class="text-light text-center">
-                        <div class="text-center mb-3">
+                   
+                        <div class="text-center mb-3 ">
 
                             <label class="avatar" :style="`background-image:url(${preview ? preview : tempAvatar})`">
                                 <input type="file" accept="image/png, image/jpeg" @change="setAvatar"
@@ -19,15 +19,17 @@
                             </label>
                         </div>
                         <label class="form-label">ชื่อเล่น</label>
-                        <input type="text" class="form-control" />
-                        <button class="btn btn-primary my-3">สร้างเลย!</button>
+                        <input v-model="name" type="text" class="form-control" />
+                        <button class="btn btn-primary my-3" @click.prevent="createProfile">สร้างเลย!</button>
 
                         <span  v-if="warning!==''" class="d-block text-info">{{ warning }}</span>
-                    </form>
+                   
                 </div>
             </div>
-            <div v-else>
-
+            <div v-else class="text-light text-center">
+                <h2>สวัสดี! {{ profile[0].name }}</h2>
+                <div class="avatar" :style="`background-image:url('${imgUrl}${profile[0].avatar.url}')`"></div>
+                <button class="btn btn-primary my-3" @click="$router.push('/')">หน้าแรก</button>
             </div>
         </div>
 
@@ -52,6 +54,16 @@ export default {
             preview: null,
             tempAvatar,
             warning:'',
+            imgUrl:import.meta.env.VITE_APP_BASEURL
+        }
+    },
+    computed:{
+        isGetProfile(){
+            if(this.profile){
+                return true;
+            }else{
+                return false
+            }
         }
     },
     async mounted() {
@@ -63,9 +75,9 @@ export default {
         },
         async getProfile() {
             this.userservice.getProfile().then(result => {
-                console.log(result);
-                if (result) {
-                    console.log(result.data);
+            
+                if (result && result.message==="Get profile successfully") {
+                    
                     this.profile = result.data;
                 } else {
                     this.profile = null;
@@ -96,6 +108,18 @@ export default {
             const formData = new FormData();
             formData.append('name', this.name);
             formData.append('avatar', this.avatar);
+            console.log([...formData])
+            await this.userservice.createProfile(formData).then(result => {
+                console.log(result);
+                if(result){
+                    this.getProfile().then(cb => {
+                        if(cb){
+
+                            this.create=false;
+                        }
+                    })
+                }
+            })
         }
     }
 }

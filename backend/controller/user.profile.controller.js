@@ -83,7 +83,6 @@ module.exports.getProfile = async (req, res) => {
 
         const user = await Profile.aggregate(pipeline);
 
-        console.log(user);
 
         if (user.length > 0) {
 

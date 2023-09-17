@@ -24,9 +24,7 @@ const cpUpload = upload.single('avatar');
 router.get('/me',Auth,User.me);
 
 /* GET users listing. */
-router.get('/profile', function (req, res, next) {
-  res.send('respond with a resource');
-});
+router.get('/profile',Auth, Profile.getProfile);
 
 router.post('/signin', User.signin);
 router.post('/signup', User.signup);
