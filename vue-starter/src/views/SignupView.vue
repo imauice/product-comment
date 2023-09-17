@@ -11,6 +11,7 @@
         <label>email</label>
         <input v-model="email" type="email" class="form-control" style="max-width:15rem"/>
         <button class="btn btn-primary my-3" @click.prevent="SignUp">Sign Up</button>
+        <p v-if="warning!==''" class="text-warning">{{ warning }}</p>
     </form>
 </div>
 </div>
@@ -28,11 +29,18 @@ export default {
         return {
             username:'',
             password:'',
-            email:''
+            email:'',
+            warning:'',
         }
     },
     methods:{
         async SignUp(){
+
+            if(this.username==='' || this.password ==="") {
+                this.warning = "กรุณาใส่ username และ password";
+                return;
+            }
+
             const signupdata = {
                username: this.username,
                password: this.password,

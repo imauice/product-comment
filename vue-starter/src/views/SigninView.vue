@@ -34,7 +34,10 @@ export default {
     },
     methods: {
         async SignIn() {
-
+            if(this.username==='' || this.password ==="") {
+                this.warning = "กรุณาใส่ username และ password";
+                return;
+            }
             const logindata = {
                 username: this.username,
                 password: this.password
