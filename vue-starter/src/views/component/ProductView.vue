@@ -54,7 +54,7 @@
                                             {{ c.comment }}
                                         </p>
                                         <small class="text-sm text-secondary">
-                                            {{ dateFormat(c.date) }}
+                                            {{ c.date?dateFormat(c.date):null }}
                                         </small>
                                     </div>
                                 </div>
