@@ -47,7 +47,7 @@ export default {
     methods: {
         setImage(e) {
             const file = e.target.files[0]
-            if (file) {
+            if (file && file.size < 150 * 1000) {
                 this.productImage = file;
                 const fileReader = new FileReader();
                 fileReader.readAsDataURL(file);
@@ -56,6 +56,8 @@ export default {
                     this.preview = event.target?.result;
 
                 })
+            }else{
+                this.warning = "กรุณาใส่รูปขนาดไม่เกิน 150 kb"
             }
         },
         async createProduct() {
