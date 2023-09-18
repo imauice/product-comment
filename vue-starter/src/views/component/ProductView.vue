@@ -79,7 +79,7 @@
                                     {{ item.comment }}
                                 </p>
                                 <p>
-                                    {{ dateFormat(item.date) }}
+                                    {{ item.date?dateFormat(item.date):null }}
                                 </p>
 
                                 <div class="avatar" :style="`background-image:url('${baseUrl + item.userAvatar[0]?.url}')`">
