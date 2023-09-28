@@ -4,6 +4,7 @@ import TopNavbar from "@/components/navbar/TopNavbar.vue";
 import Loader from "@/components/Loader.vue";
 import User from "@/services/user";
 
+
 export default {
   components: {
     TopNavbar,
@@ -11,12 +12,20 @@ export default {
   },
   setup() {
     const userservice = new User();
-    return { userservice }
+
+    const socket = new WebSocket('ws://localhost:8080');
+
+    return { userservice,socket }
   },
   data (){
     return {
       loading:true,
     }
+  },
+  created(){
+    this.socket.addEventListener('message',(event)=>{
+      console.log(event.data)
+    })
   },
   async mounted() {
     await this.userservice.greeting().then(result=>{
@@ -24,6 +33,13 @@ export default {
         this.loading = false;
       }
     });
+  },
+  methods:{
+    sendGreeting(){
+      this.socket.addEventListener('message',(event)=>{
+        this.socket.send('hi server');
+      })
+    }
   }
 }
 
@@ -33,6 +49,10 @@ export default {
   <div v-if="!loading">
     <TopNavbar />
     <RouterView />
+    <div class="text-center" > 
+
+      <button class="btn btn-primary" @click ="sendGreeting">Send greeting</button>
+    </div>
   </div>
   <div v-else class="loader">
     <Loader/>
