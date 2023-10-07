@@ -36,9 +36,9 @@ export default {
   },
   methods:{
     sendGreeting(){
-      this.socket.addEventListener('message',(event)=>{
+      this.socket.addEventListener('open',(event)=>{
         this.socket.send('hi server');
-      })
+      });
     }
   }
 }

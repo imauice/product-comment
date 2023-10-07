@@ -37,9 +37,14 @@ var server = http.createServer(app);
     ws.send(`hi ${data}`);
    });
 
+   ws.on('open',(connection)=>{
+    console.log(connection);
+    ws.send(`hi ${connection}`);
+   })
+
    setInterval(()=>{
     ws.send('hi client')
-   },30000);
+   },2000);
  
  });
 
